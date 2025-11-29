@@ -1,0 +1,37 @@
+<div class="keypad-container">
+  <div class="w-full flex justify-center mt-6">
+    <div class="bg-white p-5 rounded-2xl shadow-xl w-64"
+         (click)="$event.stopPropagation()">
+
+      <div class="grid grid-cols-3 gap-4 text-center text-2xl font-bold">
+
+        @for(n of numbers; track n) {
+          <button
+            class="p-4 bg-gray-200 rounded-xl active:bg-gray-300"
+            (click)="press(n)">
+            {{ n }}
+          </button>
+        }
+
+        <button
+          class="p-4 bg-red-200 rounded-xl active:bg-red-300 text-red-700"
+          (click)="backspace()">
+          ←
+        </button>
+
+        <button
+          class="p-4 bg-gray-200 rounded-xl active:bg-gray-300"
+          (click)="press(0)">
+          0
+        </button>
+
+        <button
+          class="p-4 bg-green-300 rounded-xl active:bg-green-400 text-green-700"
+          (click)="done()">
+          ✓
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
