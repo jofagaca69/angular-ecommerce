@@ -1,14 +1,14 @@
-<div class="min-h-screen bg-green-50 text-gray-900 flex justify-center">
+<div class="min-h-screen bg-blue-50 text-gray-900 flex justify-center">
   <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
     <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 flex flex-col justify-center">
 
       <div class="flex flex-col items-center">
         <img src="/logo.png" class="w-mx-auto w-1/2" />
-        <h1 class="text-center text-2xl font-bold text-green-700">
-          Bienvenido nuevamente
+        <h1 class="text-center text-2xl font-bold text-blue-700">
+          Crea tu cuenta
         </h1>
         <p class="text-center text-sm text-gray-600 mt-2">
-          Ingresa con tu número de teléfono y contraseña
+          Registra un número de teléfono y una contraseña para comenzar
         </p>
       </div>
 
@@ -16,7 +16,7 @@
         <div class="w-full flex-1">
 
           <div class="mx-auto max-w-xs">
-            <form [formGroup]="loginForm">
+            <form [formGroup]="registerForm">
 
               <input
                 class="w-full px-8 py-4 rounded-lg bg-gray-100 border border-gray-200"
@@ -42,18 +42,17 @@
                 </div>
               }
 
-              <button class="mt-5 bg-green-500 text-white w-full py-4 rounded-lg hover:bg-green-700 disabled:bg-gray-300"
-                      [disabled]="!loginForm.valid"
-                      (click)="login()">
-                Ingresar
+              <button class="mt-5 bg-blue-500 text-white w-full py-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-300" (click)="register()"
+                [disabled]="!registerForm.valid">
+                Registrarme
               </button>
 
               <button
                 type="button"
-                class="mt-5 bg-blue-500 text-white w-full py-4 rounded-lg hover:bg-blue-700 transition-all"
-                (click)="goToRegister()"
+                class="mt-5 bg-white text-blue-500 border-blue-500 border-2 w-full py-4 rounded-lg hover:bg-blue-300 transition-all"
+                (click)="goToLogin()"
               >
-                Crear cuenta
+                Volver al inicio de sesión
               </button>
 
               <div class="mt-6 w-full flex justify-center">
@@ -63,14 +62,17 @@
               </div>
             </form>
           </div>
+
         </div>
       </div>
+
     </div>
 
-    <div class="flex-1 bg-green-100 text-center hidden lg:flex">
+    <div class="flex-1 bg-blue-100 text-center hidden lg:flex">
       <div class="w-full h-full bg-cover bg-center bg-no-repeat"
            style="background-image: url('/background_logo.jpg');">
       </div>
     </div>
+
   </div>
 </div>

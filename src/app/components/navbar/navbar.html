@@ -1,0 +1,36 @@
+<nav class="w-full bg-white shadow px-6 py-4 flex justify-between items-center">
+
+  <!-- Logo -->
+  <div class="text-xl font-semibold text-green-600">
+    MiTienda
+  </div>
+
+  <!-- Navegación -->
+  <div class="flex gap-6 items-center">
+
+    <a routerLink="/productos" class="text-gray-700 hover:text-green-600 transition">
+      Productos
+    </a>
+
+    <!-- Usuario logueado -->
+    @if (isLoggedIn) {
+      <div class="relative" (mouseenter)="dropdownOpen = true" (mouseleave)="dropdownOpen = false">
+
+        <div class="flex items-center gap-2">
+          <a routerLink="/mis-pedidos" class="text-gray-700 hover:text-green-600">Mi Cuenta</a>
+          <button class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-700" (click)="logout()">Cerrar sesión</button>
+        </div>
+      </div>
+    }
+
+    <!-- Usuario NO logueado -->
+    @else {
+      <button
+        class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700 transition"
+        (click)="goToLogin()">
+        Iniciar sesión
+      </button>
+    }
+
+  </div>
+</nav>

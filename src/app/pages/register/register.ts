@@ -1,27 +1,25 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NumericKeypad } from '../../components/numeric-keypad/numeric-keypad';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../services/auth-service/auth-service';
+import {FormGroup, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
+import { AuthService } from '../../services/auth-service/auth-service';
 import {Router} from '@angular/router';
+import {Toast} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
-import {StorageService} from '../../services/storage-service/storage-service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [NumericKeypad, ReactiveFormsModule],
-  templateUrl: './login.html',
+  templateUrl: './register.html',
 })
-export class Login {
+export class Register {
 
-  private authService: AuthService = inject(AuthService)
+  private authService: AuthService = inject(AuthService);
   private router = inject(Router);
   private messageService: MessageService = inject(MessageService)
-  private storageService: StorageService = inject(StorageService)
 
-  errorMessage = '';
 
-  loginForm = new FormGroup({
+  registerForm = new FormGroup({
     phone: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
@@ -31,6 +29,8 @@ export class Login {
 
   PHONE_MAX = 10;
   PASS_MAX = 6;
+
+  errorMessage = '';
 
   openKeypad(field: 'phone' | 'password') {
     this.activeField = field;
@@ -45,45 +45,35 @@ export class Login {
   onKey(event: { type: 'digit' | 'backspace' | 'done'; value?: string }) {
     if (!this.activeField) return;
 
-    const control = this.loginForm.get(this.activeField)!;
+    const control = this.registerForm.get(this.activeField)!;
     let value = control.value || '';
 
     if (event.type === 'digit') {
       const limit = this.activeField === 'phone' ? this.PHONE_MAX : this.PASS_MAX;
-      if (value.length < limit) {
-        value += event.value!;
-      }
+      if (value.length < limit) value += event.value!;
     }
 
-    if (event.type === 'backspace') {
-      value = value.slice(0, -1);
-    }
+    if (event.type === 'backspace') value = value.slice(0, -1);
 
-    if (event.type === 'done') {
-      this.closeKeypad();
-    }
+    if (event.type === 'done') this.closeKeypad();
 
     control.setValue(value);
   }
 
-  login() {
+  register() {
     this.errorMessage = '';
-    if (this.loginForm.invalid) return;
 
-    const phone = this.loginForm.get('phone')?.value ?? '';
-    const password = this.loginForm.get('password')?.value ?? '';
+    if (this.registerForm.invalid) return;
 
-    const payload = {
-      username: phone,
-      password: password
-    };
+    const username = this.registerForm.get('phone')?.value ?? '';
+    const password = this.registerForm.get('password')?.value ?? '';
 
-    this.authService.login(payload).subscribe({
+    const payload = { username, password };
+
+    this.authService.register(payload).subscribe({
       next: (resp) => {
-        console.log('Login exitoso:', resp);
-        this.storageService.set("token", resp.token)
-        this.storageService.set("phone", this.loginForm.getRawValue().phone)
-        this.router.navigate(['dashboard'])
+        this.messageService.add({ severity: 'success', summary: 'Usuario creado', detail: 'Usuario creado exitósamente, por favor inicie sesión' });
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Error en registro:', err);
@@ -94,7 +84,7 @@ export class Login {
     });
   }
 
-  goToRegister() {
-    this.router.navigate(['/register']);
+  goToLogin() {
+    this.router.navigate(['/login']);
   }
 }
