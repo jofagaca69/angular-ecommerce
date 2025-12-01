@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import {Navbar} from '../../components/navbar/navbar';
 import {CommonModule, CurrencyPipe} from '@angular/common';
-import {Rating} from 'primeng/rating';
-import {Carousel} from 'primeng/carousel';
 import {FormsModule} from '@angular/forms';
 
 @Component({
