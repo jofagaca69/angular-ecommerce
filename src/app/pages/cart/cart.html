@@ -1,0 +1,179 @@
+<app-navbar />
+
+<main class="container mx-auto py-12 px-4">
+  <h1 class="text-4xl font-bold text-gray-800 mb-10">Mi Carrito de Compras</h1>
+
+  <div class="flex flex-col lg:flex-row gap-10">
+    <div class="lg:w-3/4">
+      @for (item of cartItems(); track item.id) {
+      <div class="flex items-center border-b border-gray-200 py-4 last:border-b-0">
+        <div
+          class="flex-shrink-0 w-16 h-16 bg-green-200 rounded-lg flex items-center justify-center mr-6"
+        >
+          <svg
+            class="w-8 h-8 text-green-600"
+            viewBox="0 0 32 32"
+            id="svg5"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:svg="http://www.w3.org/2000/svg"
+            fill="#000000"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+
+            <g id="SVGRepo_iconCarrier">
+              <defs id="defs2" />
+              <g id="layer1" transform="translate(-348,-484)">
+                <path
+                  d="m 355,508.01367 a 1,1 0 0 0 -1,1 1,1 0 0 0 1,1 h 6 a 1,1 0 0 0 1,-1 1,1 0 0 0 -1,-1 z"
+                  id="path453757"
+                  style="
+                    color: currentColor;
+                    fill: currentColor;
+                    fill-rule: evenodd;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                    stroke-miterlimit: 4.1;
+                    -inkscape-stroke: none;
+                  "
+                />
+                <path
+                  d="m 354,486.01367 a 1.0001,1.0001 0 0 0 -0.89453,0.55469 l -3,6.03516 a 1.0001,1.0001 0 0 0 -0.0996,0.42187 1.0001,1.0001 0 0 0 -0.006,0.0234 v 19.96484 a 1.0001,1.0001 0 0 0 1,1 h 26 a 1.0001,1.0001 0 0 0 1,-1 v -19.96484 a 1.0001,1.0001 0 0 0 0,-0.002 1.0001,1.0001 0 0 0 -0.10547,-0.44336 l -3,-6.03516 A 1.0001,1.0001 0 0 0 374,486.01367 Z m 0.61719,2 h 6.20898 l -0.65429,4.03516 h -7.5586 z m 8.23242,0 h 4.30273 l 0.67383,4.03516 h -5.6289 z m 6.33008,0 h 4.20117 l 2.00586,4.03516 h -5.5332 z M 352,494.04883 h 8 v 9.96484 a 1.0001,1.0001 0 0 0 1.70703,0.70703 L 365,501.42773 l 3.29297,3.29297 A 1.0001,1.0001 0 0 0 370,504.01367 v -9.96484 h 6 v 17.96484 h -24 z m 10,0 h 6 v 7.55078 l -2.29297,-2.29297 a 1.0001,1.0001 0 0 0 -1.41406,0 L 362,501.59961 Z"
+                  id="path453703"
+                  style="
+                    color: currentColor;
+                    fill: currentColor;
+                    fill-rule: evenodd;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                    stroke-miterlimit: 4.1;
+                    -inkscape-stroke: none;
+                  "
+                />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <div class="flex-grow text-left">
+          <h3 class="text-lg font-semibold text-gray-800">{{ item.name }}</h3>
+          <p class="text-sm text-gray-600">Precio unitario: ${{ item.price | number : '1.2-2' }}</p>
+        </div>
+
+        <div class="flex items-center gap-3 mx-6">
+          <label for="qty-{{ item.id }}" class="text-gray-600 sr-only">Cantidad</label>
+          <input
+            id="qty-{{ item.id }}"
+            type="number"
+            min="1"
+            class="w-16 p-2 border border-gray-300 rounded text-center focus:ring-green-500 focus:border-green-500"
+            [ngModel]="item.quantity"
+            (ngModelChange)="updateQuantity(item.id, $event)"
+          />
+        </div>
+
+        <div class="font-bold text-lg text-gray-800 w-24 text-right">
+          ${{ item.price * item.quantity | number : '1.2-2' }}
+        </div>
+
+        <div class="ml-6">
+          <button
+            (click)="removeItem(item.id)"
+            class="text-red-500 hover:text-red-700 transition"
+            aria-label="Eliminar producto"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      } @empty {
+      <div class="text-center py-12 bg-gray-100 rounded-lg">
+        <p class="text-xl text-gray-600">Tu carrito está vacío. ¡Empieza a agregar productos!</p>
+        <a
+          routerLink="/home"
+          class="mt-4 inline-block text-green-600 hover:text-green-800 transition font-medium"
+          >Ver productos</a
+        >
+      </div>
+      }
+    </div>
+
+    <div class="lg:w-1/4">
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md sticky top-4">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-3">Resumen del Pedido</h2>
+
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-lg text-gray-600">Subtotal:</span>
+          <span class="text-lg font-medium text-gray-800"
+            >${{ cartTotal() | number : '1.2-2' }}</span
+          >
+        </div>
+
+        <div class="flex justify-between items-center mb-6 border-t pt-4">
+          <span class="text-xl font-bold text-gray-800">Total a pagar:</span>
+          <span class="text-2xl font-extrabold text-green-700"
+            >${{ cartTotal() | number : '1.2-2' }}</span
+          >
+        </div>
+
+        <button
+          class="w-full py-3 bg-green-600 disabled:bg-gray-400 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+          [disabled]="cartItems().length === 0 || isLoading()"
+          (click)="purchase()"
+        >
+          Proceder al Pago
+        </button>
+        @if (errorMessage) {
+        <div class="text-red-600 mt-3 text-center text-sm">
+          {{ errorMessage }}
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  @if (isLoading()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300"
+  >
+    <div class="p-6 bg-white rounded-lg shadow-xl flex flex-col items-center">
+      <svg
+        class="animate-spin h-10 w-10 text-green-600"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+
+      <p class="mt-4 text-gray-700 font-medium">Procesando su pedido...</p>
+    </div>
+  </div>
+  }
+</main>

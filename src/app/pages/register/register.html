@@ -1,12 +1,9 @@
 <div class="min-h-screen bg-blue-50 text-gray-900 flex justify-center">
   <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
     <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 flex flex-col justify-center">
-
       <div class="flex flex-col items-center">
         <img src="/logo.png" class="w-mx-auto w-1/2" />
-        <h1 class="text-center text-2xl font-bold text-blue-700">
-          Crea tu cuenta
-        </h1>
+        <h1 class="text-center text-2xl font-bold text-blue-700">Crea tu cuenta</h1>
         <p class="text-center text-sm text-gray-600 mt-2">
           Registra un número de teléfono y una contraseña para comenzar
         </p>
@@ -14,16 +11,13 @@
 
       <div class="mt-12 flex flex-col items-center w-full">
         <div class="w-full flex-1">
-
           <div class="mx-auto max-w-xs">
             <form [formGroup]="registerForm">
-
               <input
                 class="w-full px-8 py-4 rounded-lg bg-gray-100 border border-gray-200"
                 type="tel"
                 placeholder="Teléfono"
                 formControlName="phone"
-                readonly
                 (focus)="openKeypad('phone')"
               />
 
@@ -37,13 +31,16 @@
               />
 
               @if (errorMessage) {
-                <div class="text-red-600 mt-3 text-center text-sm">
-                  {{ errorMessage }}
-                </div>
+              <div class="text-red-600 mt-3 text-center text-sm">
+                {{ errorMessage }}
+              </div>
               }
 
-              <button class="mt-5 bg-blue-500 text-white w-full py-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-300" (click)="register()"
-                [disabled]="!registerForm.valid">
+              <button
+                class="mt-5 bg-blue-500 text-white w-full py-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
+                (click)="register()"
+                [disabled]="!registerForm.valid"
+              >
                 Registrarme
               </button>
 
@@ -57,22 +54,20 @@
 
               <div class="mt-6 w-full flex justify-center">
                 @if (showKeypad) {
-                  <app-numeric-keypad (key)="onKey($event)"></app-numeric-keypad>
+                <app-numeric-keypad (key)="onKey($event)"></app-numeric-keypad>
                 }
               </div>
             </form>
           </div>
-
         </div>
       </div>
-
     </div>
 
     <div class="flex-1 bg-blue-100 text-center hidden lg:flex">
-      <div class="w-full h-full bg-cover bg-center bg-no-repeat"
-           style="background-image: url('/background_register.jpg');">
-      </div>
+      <div
+        class="w-full h-full bg-cover bg-center bg-no-repeat"
+        style="background-image: url('/background_register.jpg')"
+      ></div>
     </div>
-
   </div>
 </div>

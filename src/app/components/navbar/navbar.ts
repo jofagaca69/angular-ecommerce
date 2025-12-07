@@ -1,10 +1,10 @@
-import {Component, inject} from '@angular/core';
-import {StorageService} from '../../services/storage-service/storage-service';
-import {Router} from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { StorageService } from '../../services/storage-service/storage-service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -16,6 +16,14 @@ export class Navbar {
 
   get isLoggedIn(): boolean {
     return !!this.storageService.get<string>('token');
+  }
+
+  cartItemCount = computed(() => {
+    return this.storageService.cartItems().reduce((total, item) => total + item.quantity, 0);
+  });
+
+  get showCartCount(): boolean {
+    return this.cartItemCount() > 0;
   }
 
   logout() {
