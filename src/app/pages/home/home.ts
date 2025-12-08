@@ -3,6 +3,7 @@ import {Navbar} from '../../components/navbar/navbar';
 import {CommonModule, CurrencyPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { ProductService } from '../../services/product-service/product-service';
+import { StorageService } from '../../services/storage-service/storage-service';
 import { Product } from '../../models/product.interface';
 import { Category } from '../../models/category.interface';
 
@@ -15,6 +16,7 @@ import { Category } from '../../models/category.interface';
 })
 export class Home implements OnInit {
   private productService = inject(ProductService);
+  private storageService = inject(StorageService);
 
   products = signal<Product[]>([]);
   categories = signal<Category[]>([]);
@@ -68,6 +70,18 @@ export class Home implements OnInit {
       });
     } else {
       this.loadProducts();
+    }
+  }
+
+  addToCart(product: Product): void {
+    if (product.stock > 0) {
+      this.storageService.addProductToCart(product._id, product.name, product.price);
+      // Disminuir stock localmente
+      this.products.update(products =>
+        products.map(p =>
+          p._id === product._id ? { ...p, stock: p.stock - 1 } : p
+        )
+      );
     }
   }
 }

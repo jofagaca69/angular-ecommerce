@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +20,7 @@ export interface CartItem {
   imports: [Navbar, CommonModule, FormsModule, RouterModule],
   templateUrl: './cart.html',
 })
-export class Cart implements OnInit {
+export class Cart {
   private storageService: StorageService = inject(StorageService);
   private productService: ProductService = inject(ProductService);
   private messageService: MessageService = inject(MessageService);
@@ -28,15 +28,6 @@ export class Cart implements OnInit {
   cartItems = this.storageService.cartItems;
   isLoading = signal(false);
   errorMessage = '';
-
-  // TODO: REMOVE WHEN LIST PRODUCTS IS DONE
-  ngOnInit() {
-    this.storageService.updateCart([
-      { id: '6936094e09100b8c6bc8b644', name: 'Paracetamol 500mg', price: 5.5, quantity: 2 },
-      { id: '6936093209100b8c6bc8b642', name: 'Vitamina D3', price: 12.99, quantity: 1 },
-      { id: '6936096d09100b8c6bc8b646', name: 'Tensiómetro Digital', price: 45.0, quantity: 1 },
-    ]);
-  }
 
   cartTotal = computed(() => {
     return this.cartItems().reduce((sum, item) => sum + item.price * item.quantity, 0);

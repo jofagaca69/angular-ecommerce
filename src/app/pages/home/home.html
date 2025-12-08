@@ -88,8 +88,9 @@
           </span>
         </div>
 
-        <button [disabled]="product.stock === 0" [class]="product.stock > 0
-                ? 'mt-4 w-full py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-800 transition'
+        <button (click)="addToCart(product)" [disabled]="product.stock === 0"
+          [class]="product.stock > 0
+                        ? 'mt-4 w-full py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-800 transition cursor-pointer'
                 : 'mt-4 w-full py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed'">
           {{ product.stock > 0 ? 'Agregar al carrito' : 'Sin stock' }}
         </button>
