@@ -13,6 +13,8 @@ export class Navbar {
   private router = inject(Router);
 
   dropdownOpen = false;
+  adminDropdownOpen = false;
+  private adminDropdownTimeout: any;
 
   get isLoggedIn(): boolean {
     return !!this.storageService.get<string>('token');
@@ -24,6 +26,19 @@ export class Navbar {
 
   get showCartCount(): boolean {
     return this.cartItemCount() > 0;
+  }
+
+  showAdminDropdown() {
+    if (this.adminDropdownTimeout) {
+      clearTimeout(this.adminDropdownTimeout);
+    }
+    this.adminDropdownOpen = true;
+  }
+
+  hideAdminDropdown() {
+    this.adminDropdownTimeout = setTimeout(() => {
+      this.adminDropdownOpen = false;
+    }, 200);
   }
 
   logout() {

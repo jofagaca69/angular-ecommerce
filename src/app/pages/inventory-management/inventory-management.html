@@ -1,0 +1,272 @@
+<app-navbar />
+
+<main class="container mx-auto py-12 px-4">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800">Gestión de Inventario</h1>
+    <p class="text-gray-600 mt-2">Administra el stock de productos y monitorea el inventario</p>
+  </div>
+
+  <!-- Estadísticas del Inventario -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm font-medium">Total de Productos</p>
+          <p class="text-3xl font-bold text-gray-800">{{ products().length }}</p>
+        </div>
+        <div class="bg-blue-100 p-3 rounded-full">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm font-medium">Productos con Stock Bajo</p>
+          <p class="text-3xl font-bold text-orange-600">{{ lowStockProducts().length }}</p>
+        </div>
+        <div class="bg-orange-100 p-3 rounded-full">
+          <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-gray-500 text-sm font-medium">Valor Total del Inventario</p>
+          <p class="text-3xl font-bold text-green-600">
+            {{ totalInventoryValue() | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+          </p>
+        </div>
+        <div class="bg-green-100 p-3 rounded-full">
+          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros por Categoría -->
+  <section class="mb-6">
+    <h2 class="text-xl font-bold text-gray-700 mb-4">Filtrar por Categoría</h2>
+    <div class="flex flex-wrap gap-3">
+      <button
+        (click)="filterByCategory(null)"
+        [class]="
+          selectedCategory() === null
+            ? 'px-4 py-2 bg-green-600 text-white rounded-lg font-medium shadow-md'
+            : 'px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition'
+        "
+      >
+        Todas
+      </button>
+
+      @for (category of categories(); track category._id) {
+      <button
+        (click)="filterByCategory(category._id)"
+        [class]="
+          selectedCategory() === category._id
+            ? 'px-4 py-2 bg-green-600 text-white rounded-lg font-medium shadow-md'
+            : 'px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition'
+        "
+      >
+        {{ category.name }}
+      </button>
+      }
+    </div>
+  </section>
+
+  <!-- Ajuste de Umbral de Stock Bajo -->
+  <section class="mb-6 bg-white p-4 rounded-lg shadow-md">
+    <label class="block text-gray-700 font-medium mb-2">
+      Umbral de Stock Bajo: {{ lowStockThreshold() }} unidades
+    </label>
+    <input
+      type="range"
+      min="5"
+      max="50"
+      step="5"
+      [(ngModel)]="lowStockThreshold"
+      class="w-full"
+    />
+  </section>
+
+  <!-- Lista de Productos -->
+  @if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+    <span class="ml-4 text-gray-600 text-lg">Cargando inventario...</span>
+  </div>
+  }
+
+  @if (!loading() && filteredProducts().length > 0) {
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Producto
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Categoría
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Precio
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Stock
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Valor Total
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (product of filteredProducts(); track product._id) {
+          <tr
+            [class]="
+              getStockStatus(product.stock) === 'critical'
+                ? 'bg-red-50 hover:bg-red-100'
+                : getStockStatus(product.stock) === 'low'
+                ? 'bg-yellow-50 hover:bg-yellow-100'
+                : 'hover:bg-gray-50'
+            "
+          >
+            <td class="px-6 py-4">
+              <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+              @if (product.description) {
+              <div class="text-xs text-gray-500">{{ product.description }}</div>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ getCategoryNames(product) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ product.price | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingProduct()?._id === product._id) {
+              <input
+                type="number"
+                min="0"
+                [(ngModel)]="newStock"
+                class="border border-gray-300 rounded px-2 py-1 w-20 text-center text-black"
+              />
+              } @else {
+              <span
+                [class]="
+                  getStockStatus(product.stock) === 'critical'
+                    ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'
+                    : getStockStatus(product.stock) === 'low'
+                    ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800'
+                    : 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'
+                "
+              >
+                {{ product.stock }} unidades
+              </span>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {{ product.price * product.stock | currency : 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              @if (editingProduct()?._id === product._id) {
+              <button
+                (click)="updateStock()"
+                class="text-green-600 hover:text-green-900 mr-3"
+                title="Guardar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                (click)="cancelEdit()"
+                class="text-gray-600 hover:text-gray-900"
+                title="Cancelar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+              } @else {
+              <button
+                (click)="startEditStock(product)"
+                class="text-blue-600 hover:text-blue-900"
+                title="Actualizar Stock"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  ></path>
+                </svg>
+              </button>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+
+  @if (!loading() && filteredProducts().length === 0) {
+  <div class="text-center py-20 bg-gray-100 rounded-lg">
+    <p class="text-xl text-gray-600">No hay productos en esta categoría</p>
+  </div>
+  }
+</main>
+
+<p-toast />

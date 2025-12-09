@@ -4,7 +4,7 @@
 
   <!-- Navegación -->
   <div class="flex gap-6 items-center">
-    <a routerLink="/productos" class="text-gray-700 hover:text-green-600 transition"> Productos </a>
+    <a routerLink="/home" class="text-gray-700 hover:text-green-600 transition"> Productos </a>
 
     <a routerLink="/cart" class="text-gray-700 hover:text-green-600 transition">
       Carrito @if (cartItemCount() > 0) {
@@ -14,11 +14,38 @@
       }
     </a>
 
+    <!-- Menú Admin (solo si está logueado) -->
+    @if (isLoggedIn) {
+    <div class="relative" (mouseenter)="showAdminDropdown()" (mouseleave)="hideAdminDropdown()">
+      <button class="text-gray-700 hover:text-green-600 transition flex items-center gap-1">
+        Administrar
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+      
+      @if (adminDropdownOpen) {
+      <div class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50"
+           (mouseenter)="showAdminDropdown()" (mouseleave)="hideAdminDropdown()">
+        <a routerLink="/admin/dashboard" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          📊 Dashboard
+        </a>
+        <a routerLink="/admin/users" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          👥 Gestión de Compradores
+        </a>
+        <a routerLink="/admin/inventory" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          📦 Gestión de Inventario
+        </a>
+      </div>
+      }
+    </div>
+    }
+
     <!-- Usuario logueado -->
     @if (isLoggedIn) {
     <div class="relative" (mouseenter)="dropdownOpen = true" (mouseleave)="dropdownOpen = false">
       <div class="flex items-center gap-2">
-        <a routerLink="/mis-pedidos" class="text-gray-700 hover:text-green-600">Mi Cuenta</a>
+        <span class="text-gray-700">Mi Cuenta</span>
         <button class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-700" (click)="logout()">
           Cerrar sesión
         </button>

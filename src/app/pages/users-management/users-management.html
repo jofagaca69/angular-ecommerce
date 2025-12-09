@@ -1,0 +1,169 @@
+<app-navbar />
+
+<main class="container mx-auto py-12 px-4">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800">Gestión de Compradores</h1>
+    <p class="text-gray-600 mt-2">Administra la información de los usuarios registrados</p>
+  </div>
+
+  @if (loading()) {
+  <div class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+    <span class="ml-4 text-gray-600 text-lg">Cargando usuarios...</span>
+  </div>
+  }
+
+  @if (!loading() && users().length > 0) {
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Usuario
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Email
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Rol
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Fecha de Registro
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (user of users(); track user._id) {
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingUser()?._id === user._id) {
+              <input
+                type="text"
+                [(ngModel)]="editForm().username"
+                class="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                placeholder="Nombre de usuario"
+              />
+              } @else {
+              <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingUser()?._id === user._id) {
+              <input
+                type="email"
+                [(ngModel)]="editForm().email"
+                class="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                placeholder="Email"
+              />
+              } @else {
+              <div class="text-sm text-gray-900">{{ user.email }}</div>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingUser()?._id === user._id) {
+              <select
+                [(ngModel)]="editForm().role"
+                class="border border-gray-300 rounded px-2 py-1 w-full text-black"
+              >
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+                <option value="employee">Empleado</option>
+              </select>
+              } @else {
+              <span
+                [class]="
+                  user.role === 'admin'
+                    ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800'
+                    : user.role === 'employee'
+                    ? 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800'
+                    : 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800'
+                "
+              >
+                {{ user.role || 'user' }}
+              </span>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ user.createdAt | date : 'short' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              @if (editingUser()?._id === user._id) {
+              <button
+                (click)="saveUser()"
+                class="text-green-600 hover:text-green-900 mr-3"
+                title="Guardar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                (click)="cancelEdit()"
+                class="text-gray-600 hover:text-gray-900"
+                title="Cancelar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+              } @else {
+              <button
+                (click)="startEdit(user)"
+                class="text-blue-600 hover:text-blue-900 mr-3"
+                title="Editar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                (click)="deleteUser(user._id)"
+                class="text-red-600 hover:text-red-900"
+                title="Eliminar"
+              >
+                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  ></path>
+                </svg>
+              </button>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+
+  @if (!loading() && users().length === 0) {
+  <div class="text-center py-20 bg-gray-100 rounded-lg">
+    <p class="text-xl text-gray-600">No hay usuarios registrados</p>
+  </div>
+  }
+</main>
+
+<p-toast />
