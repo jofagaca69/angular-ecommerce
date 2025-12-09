@@ -63,12 +63,12 @@
         </div>
 
         <div class="flex items-center gap-3 mx-6">
-          <label for="qty-{{ item.id }}" class="text-gray-600 sr-only">Cantidad</label>
+          <label for="qty-{{ item.id }}" class="text-gray-700 sr-only">Cantidad</label>
           <input
             id="qty-{{ item.id }}"
             type="number"
             min="1"
-            class="w-16 p-2 border border-gray-300 rounded text-center focus:ring-green-500 focus:border-green-500"
+            class="w-16 p-2 border border-gray-300 rounded text-center text-black focus:ring-green-500 focus:border-green-500"
             [ngModel]="item.quantity"
             (ngModelChange)="updateQuantity(item.id, $event)"
           />
