@@ -23,13 +23,19 @@
               Usuario
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nombre
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Teléfono
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Dirección
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Email
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Rol
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Fecha de Registro
             </th>
             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Acciones
@@ -54,13 +60,60 @@
             <td class="px-6 py-4 whitespace-nowrap">
               @if (editingUser()?._id === user._id) {
               <input
+                type="text"
+                [(ngModel)]="editForm().name"
+                class="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                placeholder="Nombre completo"
+                maxlength="100"
+              />
+              } @else {
+              <div class="text-sm text-gray-900">{{ user.name || '-' }}</div>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingUser()?._id === user._id) {
+              <div>
+                <input
+                  type="text"
+                  [value]="editForm().phone"
+                  (input)="onPhoneChange($any($event.target).value)"
+                  class="border rounded px-2 py-1 w-full text-black"
+                  [class.border-red-500]="phoneError()"
+                  [class.border-gray-300]="!phoneError()"
+                  placeholder="1234567890"
+                  maxlength="15"
+                />
+                @if (phoneError()) {
+                <p class="text-xs text-red-600 mt-1">{{ phoneError() }}</p>
+                }
+              </div>
+              } @else {
+              <div class="text-sm text-gray-900">{{ user.phone || '-' }}</div>
+              }
+            </td>
+            <td class="px-6 py-4">
+              @if (editingUser()?._id === user._id) {
+              <textarea
+                [(ngModel)]="editForm().address"
+                class="border border-gray-300 rounded px-2 py-1 w-full text-black"
+                placeholder="Dirección completa"
+                rows="2"
+                maxlength="500"
+              ></textarea>
+              } @else {
+              <div class="text-sm text-gray-900 max-w-xs truncate">{{ user.address || '-' }}</div>
+              }
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              @if (editingUser()?._id === user._id) {
+              <input
                 type="email"
                 [(ngModel)]="editForm().email"
                 class="border border-gray-300 rounded px-2 py-1 w-full text-black"
                 placeholder="Email"
               />
               } @else {
-              <div class="text-sm text-gray-900">{{ user.email }}</div>
+              <div class="text-sm text-gray-900">{{ user.email || '-' }}</div>
               }
             </td>
             <td class="px-6 py-4 whitespace-nowrap">

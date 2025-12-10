@@ -68,13 +68,49 @@ export class Cart {
       },
       error: (err) => {
         console.error('Error en compra:', err);
+        this.isLoading.set(false);
 
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Ocurrió un error inesperado',
-        });
-        this.errorMessage = 'Ocurrió un error inesperado.';
+        // Si el error es 401 (Unauthorized), redirigir al login
+        if (err.status === 401 || err.error?.message === 'Unauthorized') {
+          // Guardar la ruta actual para volver después del login
+          this.storageService.set('returnUrl', '/cart');
+          
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Autenticación requerida',
+            detail: 'Debes iniciar sesión para realizar la compra',
+          });
+          
+          // Redirigir al login
+          this.router.navigate(['/login']);
+        } else if (err.status === 504 || err.name === 'TimeoutError') {
+          // Timeout error
+          const errorMessage = err.error?.message || 'La solicitud está tomando demasiado tiempo. Por favor, intenta nuevamente.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Tiempo de espera agotado',
+            detail: errorMessage,
+          });
+          this.errorMessage = errorMessage;
+        } else if (err.status === 503) {
+          // Service Unavailable - RabbitMQ o servicio no disponible
+          const errorMessage = err.error?.message || 'El servicio no está disponible en este momento. Por favor, intenta nuevamente.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Servicio no disponible',
+            detail: errorMessage,
+          });
+          this.errorMessage = errorMessage;
+        } else {
+          // Otros errores
+          const errorMessage = err.error?.message || 'Ocurrió un error inesperado. Por favor, intenta nuevamente.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error en la compra',
+            detail: errorMessage,
+          });
+          this.errorMessage = errorMessage;
+        }
       },
     });
   }

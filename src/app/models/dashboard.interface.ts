@@ -4,6 +4,7 @@ export interface DashboardStats {
   inventoryValue: number;
   lowStockProducts: number;
   recentSales: number;
+  period?: 'day' | 'week' | 'month';
 }
 
 export interface InventoryStats {

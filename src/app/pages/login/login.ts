@@ -5,6 +5,7 @@ import {AuthService} from '../../services/auth-service/auth-service';
 import {Router} from '@angular/router';
 import {MessageService} from 'primeng/api';
 import {StorageService} from '../../services/storage-service/storage-service';
+import { getRoleFromToken } from '../../utils/jwt-utils';
 
 @Component({
   selector: 'app-login',
@@ -83,7 +84,26 @@ export class Login {
         console.log('Login exitoso:', resp);
         this.storageService.set("token", resp.token)
         this.storageService.set("phone", this.loginForm.getRawValue().phone)
-        this.router.navigate(['dashboard'])
+        
+        // Get user role from token to determine redirect
+        const token = resp.token;
+        const userRole = getRoleFromToken(token);
+        
+        // Verificar si hay una ruta de retorno guardada
+        const returnUrl = this.storageService.get<string>('returnUrl');
+        
+        if (returnUrl) {
+          // Limpiar la ruta de retorno y navegar allí
+          this.storageService.remove('returnUrl');
+          this.router.navigate([returnUrl]);
+        } else {
+          // Redirect based on role
+          if (userRole === 'admin' || userRole === 'employee') {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.router.navigate(['dashboard']);
+          }
+        }
       },
       error: (err) => {
         console.error('Error en registro:', err);

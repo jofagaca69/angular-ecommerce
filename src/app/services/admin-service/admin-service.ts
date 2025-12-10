@@ -74,8 +74,8 @@ export class AdminService {
   }
 
   // Gestión de Ventas y Dashboard
-  getDashboardStats(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${this.apiUrl}/orders/api/dashboard/stats`, {
+  getDashboardStats(period: 'day' | 'week' | 'month' = 'day'): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.apiUrl}/orders/api/dashboard/stats?period=${period}`, {
       headers: this.getAuthHeaders(),
     });
   }
