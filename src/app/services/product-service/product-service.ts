@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, timeout, catchError, throwError } from "rxjs";
 import { Product } from "../../models/product.interface";
 import { Category } from "../../models/category.interface";
 import { environment } from "../../../environments/environment";
@@ -50,6 +50,20 @@ export class ProductService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-    return this.http.post(`${this.apiUrl}/products/buy`, data, { headers });
+    
+    // Agregar timeout de 35 segundos (5 segundos más que el backend)
+    return this.http.post(`${this.apiUrl}/products/buy`, data, { headers })
+      .pipe(
+        timeout(35000), // 35 segundos timeout
+        catchError((error) => {
+          if (error.name === 'TimeoutError') {
+            return throwError(() => ({
+              status: 504,
+              error: { message: 'La solicitud está tomando demasiado tiempo. Por favor, intenta nuevamente.' }
+            }));
+          }
+          return throwError(() => error);
+        })
+      );
   }
 }

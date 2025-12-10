@@ -10,7 +10,7 @@ export class AuthService {
 
   private readonly API_URL = 'http://localhost:3003/auth';
 
-  login(data: { username: string; password: string }): Observable<any> {
+  login(data: { username: string; password: string; requireRole?: string }): Observable<any> {
     return this.http.post(`${this.API_URL}/login`, data);
   }
 

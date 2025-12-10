@@ -1,9 +1,54 @@
 <app-navbar />
 
 <main class="container mx-auto py-12 px-4">
-  <div class="mb-8">
-    <h1 class="text-4xl font-bold text-gray-800">Dashboard Administrativo</h1>
-    <p class="text-gray-600 mt-2">Vista general de ventas, inventario y estadísticas</p>
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-4xl font-bold text-gray-800">Dashboard Administrativo</h1>
+      <p class="text-gray-600 mt-2">Vista general de ventas, inventario y estadísticas</p>
+      @if (stats().period) {
+      <p class="text-sm text-gray-500 mt-1">
+        Período: 
+        <span class="font-semibold">
+          {{ stats().period === 'day' ? 'Últimas 24 horas' : stats().period === 'week' ? 'Últimos 7 días' : 'Últimos 30 días' }}
+        </span>
+      </p>
+      }
+    </div>
+    <div class="flex gap-2">
+      <button
+        (click)="onPeriodChange('day')"
+        [class]="
+          'px-4 py-2 rounded-lg font-medium transition-colors ' +
+          (selectedPeriod() === 'day'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+        "
+      >
+        Día
+      </button>
+      <button
+        (click)="onPeriodChange('week')"
+        [class]="
+          'px-4 py-2 rounded-lg font-medium transition-colors ' +
+          (selectedPeriod() === 'week'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+        "
+      >
+        Semana
+      </button>
+      <button
+        (click)="onPeriodChange('month')"
+        [class]="
+          'px-4 py-2 rounded-lg font-medium transition-colors ' +
+          (selectedPeriod() === 'month'
+            ? 'bg-green-600 text-white'
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+        "
+      >
+        Mes
+      </button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -22,7 +67,7 @@
         <div>
           <p class="text-gray-500 text-sm font-medium mb-1">Total de Ventas</p>
           <p class="text-3xl font-bold text-gray-800">{{ stats().totalSales }}</p>
-          <p class="text-xs text-gray-400 mt-1">Órdenes completadas</p>
+          <p class="text-xs text-gray-400 mt-1">Órdenes completadas (todas)</p>
         </div>
         <div class="bg-blue-100 p-3 rounded-full">
           <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +231,12 @@
 
   <!-- Ventas Recientes -->
   <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">Ventas Recientes</h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-gray-800">Ventas Recientes</h2>
+      <p class="text-sm text-gray-500">
+        Ventas en el período seleccionado: <span class="font-semibold">{{ stats().recentSales }}</span>
+      </p>
+    </div>
 
     @if (recentSales().length > 0) {
     <div class="overflow-x-auto">

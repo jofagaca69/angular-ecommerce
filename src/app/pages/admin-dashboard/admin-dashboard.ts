@@ -26,22 +26,33 @@ export class AdminDashboardComponent implements OnInit {
     inventoryValue: 0,
     lowStockProducts: 0,
     recentSales: 0,
+    period: 'day',
   });
   
   recentSales = signal<Sale[]>([]);
   loading = signal<boolean>(false);
+  selectedPeriod = signal<'day' | 'week' | 'month'>('day');
 
   ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  onPeriodChange(period: 'day' | 'week' | 'month'): void {
+    this.selectedPeriod.set(period);
     this.loadDashboardData();
   }
 
   loadDashboardData(): void {
     this.loading.set(true);
 
-    // Cargar estadísticas del dashboard
-    this.adminService.getDashboardStats().subscribe({
+    // Cargar estadísticas del dashboard con el período seleccionado
+    this.adminService.getDashboardStats(this.selectedPeriod()).subscribe({
       next: (stats) => {
         this.stats.set(stats);
+        // Ensure period is set in stats
+        if (!stats.period) {
+          this.stats.update(s => ({ ...s, period: this.selectedPeriod() }));
+        }
       },
       error: (error) => {
         console.error('Error loading dashboard stats:', error);
@@ -49,6 +60,15 @@ export class AdminDashboardComponent implements OnInit {
           severity: 'warn',
           summary: 'Información',
           detail: 'Algunas estadísticas no están disponibles',
+        });
+        // Set zero values on error to prevent display errors
+        this.stats.set({
+          totalSales: 0,
+          totalRevenue: 0,
+          inventoryValue: 0,
+          lowStockProducts: 0,
+          recentSales: 0,
+          period: this.selectedPeriod(),
         });
       },
     });
