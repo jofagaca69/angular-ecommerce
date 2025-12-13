@@ -14,9 +14,13 @@ Las pruebas están diseñadas siguiendo los principios del Laboratorio 3:
 ```
 tests/e2e/
 ├── pages/           # Page Object Models (POM)
-│   └── login.page.ts
+│   ├── login.page.ts
+│   ├── home.page.ts
+│   └── cart.page.ts
 ├── fixtures/        # Fixtures y datos de prueba
+│   └── test-data.ts
 ├── login.spec.ts    # Tests de login (FR-01 a FR-04)
+├── purchase.spec.ts # Tests de flujo de compra
 └── README.md        # Este archivo
 ```
 
@@ -65,14 +69,31 @@ npm run test:e2e:report
 
 Se utiliza el patrón Page Object Model para mantener los tests limpios y mantenibles:
 
+### LoginPage
 ```typescript
 import { LoginPage } from './pages/login.page';
 
-test('ejemplo', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login('1234567890', '123456');
-});
+const loginPage = new LoginPage(page);
+await loginPage.goto();
+await loginPage.login('3214', '3214');
+```
+
+### HomePage
+```typescript
+import { HomePage } from './pages/home.page';
+
+const homePage = new HomePage(page);
+await homePage.goto();
+await homePage.addFirstProductToCart();
+```
+
+### CartPage
+```typescript
+import { CartPage } from './pages/cart.page';
+
+const cartPage = new CartPage(page);
+await cartPage.goto();
+await cartPage.proceedToPurchase();
 ```
 
 ## 🔧 Configuración
@@ -120,13 +141,29 @@ Se guardan automáticamente en `test-results/` cuando un test falla.
 
 4. **Aislamiento**: Cada test es independiente. Si necesitas estado compartido, usa fixtures.
 
+## 📦 Tests Disponibles
+
+### login.spec.ts
+Tests de funcionalidad de login basados en Lab 3:
+- FR-01: Verificación de página de login
+- FR-02: Autenticación con credenciales válidas
+- FR-03: Redirección después de login
+- FR-04: Manejo de errores con credenciales inválidas
+
+### purchase.spec.ts
+Tests del flujo completo de compra:
+- ✅ Flujo completo: login -> agregar producto -> comprar
+- ✅ Compra sin autenticación (redirección a login)
+- ✅ Agregar múltiples productos al carrito
+- ✅ Actualizar cantidad en el carrito
+- ✅ Eliminar productos del carrito
+
 ## 🔄 Próximos Pasos
 
 - [ ] Agregar tests para registro de usuarios
-- [ ] Agregar tests para carrito de compras
+- [x] Agregar tests para carrito de compras
 - [ ] Agregar tests para dashboard de administrador
-- [ ] Implementar fixtures para datos de prueba
-- [ ] Agregar tests de flujos completos (compra end-to-end)
+- [x] Implementar fixtures para datos de prueba
 
 ## 📚 Referencias
 
